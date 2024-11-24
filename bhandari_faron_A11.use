@@ -1,0 +1,34 @@
+model RBAC
+
+-- classes
+class User
+attributes
+  userID : String
+end
+
+
+class Role
+attributes
+  name : String
+end
+
+
+
+class Session
+attributes
+end
+
+
+class Permission
+attributes
+end
+
+
+class Object
+attributes
+end
+
+
+class Operation
+attributes
+end
