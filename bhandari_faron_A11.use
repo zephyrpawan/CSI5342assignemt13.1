@@ -10,8 +10,9 @@ end
 class Role
 attributes
   name : String
+operations
+  grantPermission(p : Permission)
 end
-
 
 
 class Session
@@ -32,3 +33,67 @@ end
 class Operation
 attributes
 end
+
+
+-- associations
+association UserAssignment between
+  Role[*]
+  User[*]
+end
+
+association PermAssignment between
+  Role[1]
+  Permission[*]
+end
+
+association UserSessions between
+  User[1]
+  Session[*]
+end
+
+association SessionRoles between
+  Session[1]
+  Role[1..*]
+end
+
+association PermObjects between
+  Permission[1]
+  Object[0..*]
+end
+
+association PermOperations between
+  Permission[1]
+  Operation[1..*]
+end
+
+association ExecuteOn between
+  Operation[1..*]
+  Object[1..*]
+end
+
+--association SSD between
+--  Role[0..1]
+--  Role[0..*]
+--end
+--
+--association DSD between
+--  Role[0..1]
+--  Role[0..*]
+--end
+--
+--association RoleHierarchy between
+--  Role[0..1]
+--  Role[0..*]
+--end
+
+
+-- OCL constraints
+constraints
+
+
+--context User :: CreateSession() : (s : Session)
+--  post : result = s and s.oclIsNew() = true and self.Session->includes(s)
+--  
+context Role :: grantPermission (p : Permission)
+  pre: Permission->excludes(p)
+  post: Permission->includes(p) 
