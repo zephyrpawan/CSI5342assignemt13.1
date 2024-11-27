@@ -4,6 +4,13 @@ model RBAC
 class User
 attributes
   userID : String
+operations
+  createSession(s : Session)
+  deleteSession(s : Session)
+  assignRole(r : Role)
+  deassignRole(r : Role)
+  assignedRoles() : Set(Role)
+  authorizedRoles() : Set(Role)
 end
 
 
@@ -12,26 +19,45 @@ attributes
   name : String
 operations
   grantPermission(p : Permission)
+  revokePermission(p : Permission)
+  checkAccess(obj : Object, op : Operation) : Boolean
+  addAscendant(r : Role)
+  deleteAscendant(r : Role)
+  addDescendant(r : Role)
+  deleteDescendant(r : Role)
+  addSSDRole(r : Role)
+  deleteSSDRole(r : Role)
+  addDSDRole(r : Role)
+  deleteDSDRole(r : Role)
+  assignedUsers() : Set(User)
+  authorizedUsers() : Set(User)
+  ascendants() : Set(Role)
+  descendants() : Set(Role)
+  ssdRoles() : Set(Role)
+  dsdRoles() : Set(Role)
 end
 
 
 class Session
-attributes
+operations
+  addActiveRole(r : Role)
+  dropActiveRole(r : Role)
+  checkAccess(obj : Object, op : Operation) : Boolean
+  invokeOperation(obj : Object, op : Operation)
 end
 
 
 class Permission
-attributes
+operations
+  checkAccess(obj : Object, op : Operation) : Boolean
 end
 
 
 class Object
-attributes
 end
 
 
 class Operation
-attributes
 end
 
 
@@ -43,7 +69,7 @@ end
 
 association PermAssignment between
   Role[1]
-  Permission[*]
+  Permission[0..*]
 end
 
 association UserSessions between
@@ -90,10 +116,9 @@ end
 -- OCL constraints
 constraints
 
+context User :: createSession(s : Session)
+  post: s.oclIsNew() = true and self.session->includes(s)
 
---context User :: CreateSession() : (s : Session)
---  post : result = s and s.oclIsNew() = true and self.Session->includes(s)
---  
-context Role :: grantPermission (p : Permission)
-  pre: Permission->excludes(p)
-  post: Permission->includes(p) 
+context Role :: grantPermission(p : Permission)
+  pre: self.permission->excludes(p)
+  post: self.permission->includes(p)
