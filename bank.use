@@ -46,7 +46,10 @@ end
 
 class Permission
 operations
-  checkAccess(obj : Object, op : Operation) : Boolean
+  checkAccess(obj : Object, op : Operation) : Boolean =
+    self.object->includes(obj) and
+    self.operation->includes(op) and
+    op.object->includes(obj)
 end
 
 class Object
@@ -149,5 +152,5 @@ context Role
 
 --
 context Permission::checkAccess(obj : Object, op : Operation) : Boolean
-  body : true
+  pre: self.object->includes(obj) and self.operation->includes(op)
 
