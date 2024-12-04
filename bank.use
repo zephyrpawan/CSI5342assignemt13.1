@@ -151,9 +151,15 @@ constraints
 context User :: createSession(s : Session)
   post: s.oclIsNew() = true and self.session->includes(s)
 
+-- Permission can be granted if missing
 context Role :: grantPermission(p : Permission)
   pre: self.permission->excludes(p)
   post: self.permission->includes(p)
+
+-- Permission can be removed if present
+context Role :: revokePermission(p : Permission)
+  pre: self.permission->includes(p)
+  post: self.permission->excludes(p)
 
 -- SSD constraint: A user cannot be assigned to two roles that are involved in an SSD relation
 context User
@@ -174,4 +180,35 @@ context Role
 -- This precondition is optional as the Permission.checkAccess will return false in this case
 --context Permission::checkAccess(obj : Object, op : Operation) : Boolean
 --  pre: self.object->includes(obj) and self.operation->includes(op)
+
+-- Each permission must be associated with 1 or more objects and operations
+context Permission
+  inv minimumOperationsAndObjects:
+    self.operation->size() > 0 and self.object->size() > 0
+
+-- Each object must be have at least a permission for 1 operation
+context Object
+  inv minPermissionOnObject:
+    self.permission->size() > 0 and self.operation->size() > 0
+
+-- Each operation must be associated with a permission to be executed on a object
+context Operation
+ inv minPermissionAndOperations:
+   self.permission->size() > 0 and self.object->size() > 0
+
+-- A role must have at least 1 permission and at least 1 user assigned
+context Role
+  inv minPermission:
+    self.permission->size() > 0 and self.user->size() > 0
+
+-- A session can have only 1 user tied to it
+context Session
+  inv sessionIsFor1SpecificUser:
+    self.user->size() = 1
+
+--if permission.checkAccess returns true, then role.grantPermission, else role.revokePermission
+
+--if role.checkAccess returns true, then session.addActiveRole, else session.dropActiveRole
+
+--if session.checkAccess returns true, then user.createSession, else user.deleteSession
 
