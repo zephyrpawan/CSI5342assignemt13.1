@@ -1,7 +1,7 @@
 model RBAC
 
 -- classes
-
+-- ***************************************************************
 class Role
 attributes
   name : String
@@ -9,7 +9,10 @@ operations
   grantPermission(p : Permission)
   revokePermission(p : Permission)
 
-  checkAccess(obj : Object, op : Operation) : Boolean
+  checkAccess(obj : Object, op : Operation) : Boolean =
+    self.permission->exists(p | p.operation->includes(op)) and
+    self.permission->exists(p | p.object->includes(obj)) and
+    op.object->includes(obj)
 
   addInheritance(r: Role)
   deleteInheritance(r: Role)
@@ -30,6 +33,7 @@ operations
 --  dsdRoles() : Set(Role)
 end
 
+-- ***************************************************************
 class User
 attributes
   userID : String
@@ -44,6 +48,7 @@ operations
 --  authorizedRoles() : Set(Role)
 end
 
+-- ***************************************************************
 class Permission
 operations
   checkAccess(obj : Object, op : Operation) : Boolean =
@@ -52,25 +57,32 @@ operations
     op.object->includes(obj)
 end
 
+-- ***************************************************************
 class Object
 attributes
   name : String
 end
 
+-- ***************************************************************
 class Operation
 attributes
   name : String
 end
 
+-- ***************************************************************
 class Session
 attributes
   name : String
 operations
   addActiveRole(r : Role)
   dropActiveRole(r : Role)
-  checkAccess(obj : Object, op : Operation) : Boolean
+  checkAccess(obj : Object, op : Operation) : Boolean =
+    self.role.permission->exists(p | p.operation->includes(op)) and
+    self.role.permission->exists(p | p.object->includes(obj)) and
+    op.object->includes(obj)
   invokeOperation(obj : Object, op : Operation)
 end
+-- ***************************************************************
 
 -- associations
 association UserAssignment between
@@ -78,52 +90,61 @@ association UserAssignment between
   Role[1..*] role role
 end
 
+-- ***************************************************************
 association PermAssignment between
   Permission[1..*] role permission
   Role[1..*] role role
 end
 
+-- ***************************************************************
 association UserSessions between
   User[1] role user
   Session[1..*] role session
 end
 
+-- ***************************************************************
 association SessionRoles between
   Session[*] role session
   Role[*] role role
 end
 
+-- ***************************************************************
 association PermObjects between
   Permission[1..*] role permission
   Object[1..*] role object
 end
 
+-- ***************************************************************
 association PermOperations between
   Permission[1..*] role permission
   Operation[1..*] role operation
 end
 
+-- ***************************************************************
 association ExecuteOn between
   Operation[*] role operation
   Object[*] role object
 end
 
+-- ***************************************************************
 association RoleHierarchy between
   Role[*] role senior
   Role[*] role junior
 end
 
+-- ***************************************************************
 association SSD between
   Role[*] role rs1
   Role[*] role rs2
 end
 
+-- ***************************************************************
 association DSD between
   Role[*] role rd1
   Role[*] role rd2
 end
 
-
+-- ***************************************************************
 -- OCL constraints
 constraints
 
@@ -150,7 +171,7 @@ context Role
  inv HierarchicalSSDConstraint:
    self.junior->forAll(j1, j2 | j1.senior->excludesAll(j2.senior))
 
---
-context Permission::checkAccess(obj : Object, op : Operation) : Boolean
-  pre: self.object->includes(obj) and self.operation->includes(op)
+-- This precondition is optional as the Permission.checkAccess will return false in this case
+--context Permission::checkAccess(obj : Object, op : Operation) : Boolean
+--  pre: self.object->includes(obj) and self.operation->includes(op)
 
