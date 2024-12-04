@@ -122,3 +122,11 @@ context User :: createSession(s : Session)
 context Role :: grantPermission(p : Permission)
   pre: self.permission->excludes(p)
   post: self.permission->includes(p)
+--
+--context Role :: revokePermission(p : Permission)
+--  pre: self.permission->includes(p)
+--  post: self.permission->excludes(p)
+--
+--context Role :: checkAccess(obj : Object, op : Operation) : Boolean
+--  post:
+
