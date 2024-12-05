@@ -171,7 +171,7 @@ context Role
 -- SSD-Permission constraint: Conflicting permissions cannot be assigned to the same role.
 context Permission
   inv SSDPermission:
-    Permission.allInstances->forAll(p1, p2 | p1.role->excludesAll(p2.role))
+    Permission.allInstances->forAll(p1, p2 | p1 <> p2 implies p1.role->excludesAll(p2.role))
 
 -- SSD constraint: A user cannot be assigned to two roles that are involved in an SSD relation
 context User

@@ -69,9 +69,8 @@
 -- We can also verify that superRole also has writePermission by
 --?? superRole.checkAccess(wfile, write)
 
-!insert(deleteFile, deleted) into PermObjects
-!create del : Operation
-!insert(del, deleted) into ExecuteOn
---
-!insert(deleteFile, del) into PermOperations
---!insert (read, file) from ExecuteOn
+
+ !create del : Operation
+ !insert(del, deleted) into ExecuteOn
+ !insert(deleteFile, del) into PermOperations
+ !insert(deleteFile, deleted) into PermObjects
