@@ -74,4 +74,4 @@
 !insert(del, deleted) into ExecuteOn
 --
 !insert(deleteFile, del) into PermOperations
-!insert (read, file) from ExecuteOn
+--!insert (read, file) from ExecuteOn

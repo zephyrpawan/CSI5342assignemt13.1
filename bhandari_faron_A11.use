@@ -16,22 +16,22 @@ operations
 
   addAscendant(r : Role)
   deleteAscendant(r : Role)
-  
+
   addDescendant(r : Role)
   deleteDescendant(r : Role)
 
   addSSDRole(r : Role)
   deleteSSDRole(r : Role)
-  
+
   addDSDRole(r : Role)
   deleteDSDRole(r : Role)
-  
+
   assignedUsers() : Set(User)
   authorizedUsers() : Set(User)
 
   ascendants() : Set(Role)
   descendants() : Set(Role)
-  
+
   ssdRoles() : Set(Role)
   dsdRoles() : Set(Role)
 end
@@ -173,11 +173,11 @@ context User
   inv DSDConstraint:
     self.session.role->forAll(r1, r2 | r1.rd1->excludes(r2))
 
--- Hierarchical SSD constraint. There cannot be roles in an SSD relation which have the same senior role.
--- Teller & Loan officer cannot be promoted to same senior position TODO
+-- Hierarchical SSD constraint.
+-- There cannot be roles in an SSD relation which have the same senior role.
 context Role
  inv HierarchicalSSDConstraint:
-   self.junior->forAll(j1, j2 | j1.senior->excludesAll(j2.senior))
+   self.senior->forAll(j1, j2 | j1.junior->excludesAll(j2.senior))
 
 -- This precondition is optional as the Permission.checkAccess will return false in this case
 --context Permission::checkAccess(obj : Object, op : Operation) : Boolean
