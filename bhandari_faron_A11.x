@@ -74,3 +74,6 @@
  !insert(del, deleted) into ExecuteOn
  !insert(deleteFile, del) into PermOperations
  !insert(deleteFile, deleted) into PermObjects
+
+ --ssdConstraint satisfy
+ !delete (deleteFile, superRole) from PermAssignment
