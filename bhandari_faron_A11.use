@@ -163,14 +163,21 @@ context Role :: revokePermission(p : Permission)
   pre: self.permission->includes(p)
   post: self.permission->excludes(p)
 
+-- SSD-Role constraint: Conflicting roles cannot be assigned to the same user
+context Role
+  inv SSDRole:
+    rs1.user->excludesAll(rs2.user)
+
+--
+
 -- SSD constraint: A user cannot be assigned to two roles that are involved in an SSD relation
 context User
-  inv SSDConstraint:
+  inv SSDUserConstraint:
     self.role->forAll(r1, r2 | r1.rs1->excludes(r2))
 
 -- DSD constraint. A user cannot activate two roles in DSD relation within a session.
 context User
-  inv DSDConstraint:
+  inv DSDUserConstraint:
     self.session.role->forAll(r1, r2 | r1.rd1->excludes(r2))
 
 -- Hierarchical SSD constraint.
