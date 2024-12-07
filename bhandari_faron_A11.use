@@ -88,20 +88,20 @@ end
 
 -- associations
 association UserAssignment between
-  User[1..*] role user
-  Role[1..*] role role
+  User[*] role user
+  Role[*] role role
 end
 
 -- ***************************************************************
 association PermAssignment between
-  Permission[1..*] role permission
-  Role[1..*] role role
+  Permission[*] role permission
+  Role[*] role role
 end
 
 -- ***************************************************************
 association UserSessions between
-  User[1] role user
-  Session[1..*] role session
+  User[*] role user
+  Session[*] role session
 end
 
 -- ***************************************************************
@@ -112,20 +112,20 @@ end
 
 -- ***************************************************************
 association PermObjects between
-  Permission[1..*] role permission
-  Object[1..*] role object
+  Permission[*] role permission
+  Object[*] role object
 end
 
 -- ***************************************************************
 association PermOperations between
-  Permission[1..*] role permission
-  Operation[1..*] role operation
+  Permission[*] role permission
+  Operation[*] role operation
 end
 
 -- ***************************************************************
 association ExecuteOn between
-  Operation[*] role operation
-  Object[*] role object
+  Operation[1..*] role operation
+  Object[1..*] role object
 end
 
 -- ***************************************************************
