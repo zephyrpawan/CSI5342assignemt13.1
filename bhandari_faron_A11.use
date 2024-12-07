@@ -42,7 +42,7 @@ attributes
   userID : String
   name: String
 operations
-  createSession(s : Session)
+  createSession() : Session
   deleteSession(s : Session)
   assignRole(r : Role)
   deassignRole(r : Role)
@@ -150,8 +150,8 @@ end
 -- OCL constraints
 constraints
 
-context User :: createSession(s : Session)
-  post: s.oclIsNew() = true and self.session->includes(s)
+context User :: createSession() : Session
+  post: result.oclIsNew() = true and self.session->includes(result)
 
 -- Permission can be granted if missing
 context Role :: grantPermission(p : Permission)
