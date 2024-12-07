@@ -85,6 +85,9 @@ operations
   invokeOperation(obj : Object, op : Operation)
 end
 -- ***************************************************************
+class Location
+end
+-- ***************************************************************
 
 -- associations
 association UserAssignment between
@@ -147,6 +150,43 @@ association DSD between
 end
 
 -- ***************************************************************
+association UserLocation between
+  User[*] role user
+  Location[1] role location
+end
+
+-- ***************************************************************
+association ActivateLocation between
+  Role[*] role role
+  Location[1] role location
+end
+
+-- ***************************************************************
+association AssignLocation between
+  Role[*] role role
+  Location[1] role location
+end
+
+-- ***************************************************************
+association PermRoleLoc between
+  Location[*] role location
+  Permission[*] role permission
+end
+
+-- ***************************************************************
+association PermObjLoc between
+  Location[*] role location
+  Permission[*] role permission
+end
+
+-- ***************************************************************
+association ObjLocation between
+  Location[1] role location
+  Object[*] role object
+end
+
+-- ***************************************************************
+
 -- OCL constraints
 constraints
 
