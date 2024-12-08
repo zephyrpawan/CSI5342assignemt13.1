@@ -271,10 +271,20 @@ context Session
   inv sessionIsFor1SpecificUser:
     self.user->size() = 1
 
---if permission.checkAccess returns true, then role.grantPermission, else role.revokePermission
---if role.checkAccess returns true, then session.addActiveRole, else session.dropActiveRole
---if session.checkAccess returns true, then user.createSession, else user.deleteSession
+-- TODO: Constraints to add
+-- userLocation: all users must be associated with a location (pg. 3)
+-- objLocation: all objects are associated with locations and each location associated with an obj must be in an allowable loc (pg. 5)
 
--- userLocation
+-- TODO: Operations to add pre/post-conditions for
+-- addRoleAssignLocation: pg. 8
+-- deleteRoleAssignLocation: pg. 9
+-- addRoleActivateLoc: pg. 9
+-- deleteRoleActivateLoc: pg. 9
+-- addPermission: pg. 10
+-- deletePermission: pg. 10
+-- assignUser: pg. 11 -- this operations already exists from previous assignment but must be changed
+-- createSession: pg. 12 -- this operations already exists from previous assignment but must be changed
+-- activateRole: pg. 13 -- this operations already exists from previous assignment but must be changed
+-- checkAccess: pg. 13 -- this operations already exists from previous assignment but must be changed
 -- activateLocationByUser
 -- activateLocationByRole
