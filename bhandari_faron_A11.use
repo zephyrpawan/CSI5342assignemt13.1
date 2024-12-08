@@ -271,6 +271,7 @@ context Session
   inv sessionIsFor1SpecificUser:
     self.user->size() = 1
 
+-- pawan
 -- TODO: Constraints to add
 -- userLocation: all users must be associated with a location (pg. 3)
 -- objLocation: all objects are associated with locations and each location associated with an obj must be in an allowable loc (pg. 5)
@@ -280,6 +281,8 @@ context Session
 -- deleteRoleAssignLocation: pg. 9
 -- addRoleActivateLoc: pg. 9
 -- deleteRoleActivateLoc: pg. 9
+
+-- sarah
 -- addPermission: pg. 10
 -- deletePermission: pg. 10
 -- assignUser: pg. 11 -- this operations already exists from previous assignment but must be changed
