@@ -86,6 +86,11 @@ operations
 end
 -- ***************************************************************
 class Location
+operations
+  userLocation(u : User) : Location
+  activateLocationByUser(u : User) : Set(Location)
+  activateLocationByRole(r : Role) : Set(Location)
+  assignLocation(r : Role)
 end
 -- ***************************************************************
 
@@ -259,8 +264,10 @@ context Session
     self.user->size() = 1
 
 --if permission.checkAccess returns true, then role.grantPermission, else role.revokePermission
-
 --if role.checkAccess returns true, then session.addActiveRole, else session.dropActiveRole
-
 --if session.checkAccess returns true, then user.createSession, else user.deleteSession
 
+-- userLocation
+-- activateLocationByUser
+-- activateLocationByRole
+-- assignLocation
