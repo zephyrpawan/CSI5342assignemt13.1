@@ -90,7 +90,15 @@ operations
   userLocation(u : User) : Location
   activateLocationByUser(u : User) : Set(Location)
   activateLocationByRole(r : Role) : Set(Location)
+
+  --maps a set of roles to a set of locations from where the role can be activated
   assignLocation(r : Role)
+
+  -- permRoleLoc gives a set of allowable locations for the role associated with a given permission
+  permRoleLoc(p : Permission) : Set(Location)
+
+  -- permRoleObj gives a set of allowable locations for the object associated with a given permission
+  permObjLoc(p : Permission) : Set(Location)
 end
 -- ***************************************************************
 
@@ -270,4 +278,3 @@ context Session
 -- userLocation
 -- activateLocationByUser
 -- activateLocationByRole
--- assignLocation
