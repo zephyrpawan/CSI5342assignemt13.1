@@ -314,11 +314,14 @@ context Object
     Object.allInstances->forAll(obj | obj.location->size() = 1 and obj.permission.l2->includes(obj.location))
 
 -- TODO: Operations to add pre/post-conditions for
--- addRoleAssignLocation: associates a new set of locations with a role
-  --The operation takes as input a role r and a set of locations l
-context Role
-  --TODO inv Role::addRoleAssignLocation(r : Role, l : Set(Location))
-  --verifies whether r is a valid role by checking whether r is in the set Roles
+-- addRoleAssignLocation: associates a new set of locations with a role. The operation takes as input a role r and a set of locations l
+context Role :: addRoleAssignLocation(r : Role, l : Set(Location))
+      --verifies whether r is a valid role by checking whether r is in the set Roles
+  pre: Role.allInstances->includes(r)
+      --whether l is a subset of Locations
+  pre: Location.allInstances->includesAll(l)
+      -- The post condition changes the object AssignLocation. The role r is now mapped to the set of original locations union l
+  post: r.l2->includesAll(l2@pre->union(l))
 
 
 -- deleteRoleAssignLocation: pg. 9
