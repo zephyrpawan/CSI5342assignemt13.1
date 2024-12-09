@@ -211,6 +211,7 @@ end
 -- OCL constraints
 constraints
 
+-- creates a new session object and associates the user with the new session
 context User :: createSession() : Session
   post: result.oclIsNew() = true and self.session->includes(result)
 
@@ -251,8 +252,27 @@ context Role
    self.senior->forAll(j1, j2 | j1.junior->excludesAll(j2.senior))
 
 -- This precondition is optional as the Permission.checkAccess will return false in this case
---context Permission::checkAccess(obj : Object, op : Operation) : Boolean
---  pre: self.object->includes(obj) and self.operation->includes(op)
+context Permission::checkAccess(obj : Object, op : Operation) : Boolean
+  --  pre1: check whether op and obj are valid objects
+  pre: op.oclIsKindOf(Operation)
+  pre: obj.oclIsKindOf(Object)
+  -- pre2: check whether obj is in acceptable location
+  pre: self.l2.object->includes(obj) -- permObjLoc
+
+context Role::checkAccess(obj : Object, op : Operation) : Boolean
+  --  pre1: check whether op and obj are valid objects
+  pre: op.oclIsKindOf(Operation)
+  pre: obj.oclIsKindOf(Object)
+  -- pre2: check whether permission associated with obj and op is in acceptable location for role assignment
+  pre: self.l2.p1.object->includes(obj)
+  pre: self.l2.p2.operation->includes(op)
+
+context Session::checkAccess(obj : Object, op : Operation) : Boolean
+  --  pre1: check whether op and obj are valid objects
+  pre: op.oclIsKindOf(Operation)
+  pre: obj.oclIsKindOf(Object)
+  -- pre2: check whether user in session is in location that is acceptable for role activation
+  pre: self.user.location->forAll(loc | self.role.l1->includes(loc))
 
 -- Each permission must be associated with 1 or more objects and operations
 context Permission
@@ -348,11 +368,16 @@ context Role :: assignUser(u : User, r : Role)
   post: self.user->includes(u)
   post: u.role->includes(r)
 
--- createSession: pg. 12 -- this operations already exists from previous assignment but must be changed
--- activateRole: pg. 13 -- this operations already exists from previous assignment but must be changed
--- checkAccess: pg. 13 -- this operations already exists from previous assignment but must be changed
-
-
+-- addActiveRole: activate a role for a user in a session (pg. 13)
+context Session :: addActiveRole(r : Role)
+  -- pre1: check whether r is an existing role
+  pre: r.oclIsKindOf(Role)
+  -- pre2: check whether r is a role associated with user associated with this session
+  pre: self.user.role->includes(r)
+  -- pre3: check whether the location of the user in this session is within the activation location of r
+  pre: self.user.location->forAll(loc | r.l1->includes(loc))
+  -- post1: sessionRole is updated so that session is now associated with r
+  post: self.role->includes(r)
 
 -- activateLocationByUser
 -- activateLocationByRole
