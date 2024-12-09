@@ -41,6 +41,7 @@ operations
   deletePermission(p : Permission)
 
   addRoleAssignLocation(r : Role, l : Set(Location))
+  deleteRoleAssignLocation(r : Role, l : Set(Location))
 end
 
 -- ***************************************************************
@@ -302,7 +303,6 @@ context Session
     self.user->size() = 1
 
 -- pawan
--- TODO: Constraints to add
 -- userLocation: all users must be associated with a location (pg. 3)
 context User
   inv allUsersMustHaveLocation:
@@ -313,7 +313,6 @@ context Object
   inv allObjectsAssociatedWithAllowableLocations:
     Object.allInstances->forAll(obj | obj.location->size() = 1 and obj.permission.l2->includes(obj.location))
 
--- TODO: Operations to add pre/post-conditions for
 -- addRoleAssignLocation: associates a new set of locations with a role. The operation takes as input a role r and a set of locations l
 context Role :: addRoleAssignLocation(r : Role, l : Set(Location))
       --verifies whether r is a valid role by checking whether r is in the set Roles
@@ -323,8 +322,16 @@ context Role :: addRoleAssignLocation(r : Role, l : Set(Location))
       -- The post condition changes the object AssignLocation. The role r is now mapped to the set of original locations union l
   post: r.l2->includesAll(l2@pre->union(l))
 
+-- deleteRoleAssignLocation: takes as input a role r and a set of locations l
+context Role :: deleteRoleAssignLocation(r : Role, l : Set(Location))
+     --verifies role r is a valid role by checking whether r is in the set Roles
+  pre: Role.allInstances->includes(r)
+     --checks whether l is a subset of the locations that are associated with the assignment of role r.
+  pre: r.l2->includesAll(l)
+     --removes l from the set of roles associated with r.
+  post: r.l2->excludesAll(l)
 
--- deleteRoleAssignLocation: pg. 9
+-- TODO: Operations to add pre/post-conditions for
 -- addRoleActivateLoc: pg. 9
 -- deleteRoleActivateLoc: pg. 9
 
