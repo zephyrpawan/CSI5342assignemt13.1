@@ -282,7 +282,14 @@ context Session
 -- pawan
 -- TODO: Constraints to add
 -- userLocation: all users must be associated with a location (pg. 3)
+context User
+  inv allUsersMustHaveLocation:
+    User.allInstances->forAll(usr | usr.location->size() = 1)
+
 -- objLocation: all objects are associated with locations and each location associated with an obj must be in an allowable loc (pg. 5)
+context Object
+  inv allObjectsAssociatedWithAllowableLocations:
+    Object.allInstances->forAll(obj | obj.location->size() = 1 and obj.permission.l2->includes(obj.location))
 
 -- TODO: Operations to add pre/post-conditions for
 -- addRoleAssignLocation: pg. 8
