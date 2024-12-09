@@ -39,6 +39,8 @@ operations
 
   addPermission(p : Permission, r : Set(Role), obj : Set(Object), op : Set(Operation), rl : Set(Location), ol : Set(Location))
   deletePermission(p : Permission)
+
+  addRoleAssignLocation(r : Role, l : Set(Location))
 end
 
 -- ***************************************************************
@@ -312,7 +314,13 @@ context Object
     Object.allInstances->forAll(obj | obj.location->size() = 1 and obj.permission.l2->includes(obj.location))
 
 -- TODO: Operations to add pre/post-conditions for
--- addRoleAssignLocation: pg. 8
+-- addRoleAssignLocation: associates a new set of locations with a role
+  --The operation takes as input a role r and a set of locations l
+context Role
+  --TODO inv Role::addRoleAssignLocation(r : Role, l : Set(Location))
+  --verifies whether r is a valid role by checking whether r is in the set Roles
+
+
 -- deleteRoleAssignLocation: pg. 9
 -- addRoleActivateLoc: pg. 9
 -- deleteRoleActivateLoc: pg. 9
