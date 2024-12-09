@@ -29,11 +29,16 @@ operations
   assignedUsers() : Set(User)
   authorizedUsers() : Set(User)
 
+  assignUser(u : User, r : Role)
+
   ascendants() : Set(Role)
   descendants() : Set(Role)
 
   ssdRoles() : Set(Role)
   dsdRoles() : Set(Role)
+
+  addPermission(p : Permission, r : Set(Role), obj : Set(Object), op : Set(Operation), rl : Set(Location), ol : Set(Location))
+  deletePermission(p : Permission)
 end
 
 -- ***************************************************************
@@ -47,6 +52,9 @@ operations
   assignRole(r : Role)
   deassignRole(r : Role)
   assignedRoles() : Set(Role)
+    begin
+        result := self.role->asSet();
+    end
   authorizedRoles() : Set(Role)
 end
 
@@ -283,11 +291,54 @@ context Session
 -- deleteRoleActivateLoc: pg. 9
 
 -- sarah
--- addPermission: pg. 10
--- deletePermission: pg. 10
--- assignUser: pg. 11 -- this operations already exists from previous assignment but must be changed
+-- addPermission: adds a new permission to the set Permissions (pg.10)
+context Role :: addPermission(p : Permission, r : Set(Role), obj : Set(Object), op : Set(Operation), rl : Set(Location), ol : Set(Location))
+  -- pre1: checks that p is not an existing permission
+  pre: self.permission->excludes(p)
+  -- pre2: checks whether obj is a valid set of objects
+  pre: obj->forAll(obj1 | obj1.oclIsKindOf(Object))
+  -- pre3: checks whether op is a valid set of operations
+  pre: op->forAll(op1 | op1.oclIsKindOf(Operation))
+  -- pre4: checks whether rl is a valid set of role locations
+  pre: rl->forAll(rl1 | rl1.oclIsKindOf(Location))
+  -- pre5: checks whether ol is a valid set of object locations
+  pre: ol->forAll(ol1 | ol1.oclIsKindOf(Location))
+  -- post1: change set of Permissions to include p1
+  post: self.permission->includes(p)
+  -- post2: permObject, permOper, PermRoleLoc, and permObjLoc are updated to include the mappings of p to obj, op, rl, and ol
+  post: rl->forAll(rl1 | self.l2->includes(rl1))
+  post: self.l2.p1->includes(p)
+  post: self.l2.p2->includes(p)
+  post: obj->forAll(obj1 | self.permission.object->includes(obj1))
+  post: op->forAll(op1 | self.permission.operation->includes(op1))
+  post: ol->forAll(ol1 | self.l2.object->includes(ol1))
+
+-- deletePermission: removes a permission p from set Permissions (pg. 10)
+context Role :: deletePermission(p : Permission)
+  -- pre1: checks that p is an existing permission by checking if it is in the set Permissions
+  pre: self.permission->includes(p)
+  -- post1: removes p from Permissions and changes the objects permAssign, permObject, permOper, permRoleLoc, permObjLoc by removing the entries associated with p in each of the objects
+  --post:
+
+-- assignUser: pg. 11
+context Role :: assignUser(u : User, r : Role)
+  -- pre1: checks whether u is valid
+  pre: u.oclIsKindOf(User)
+  -- pre2: checks whether r is valid
+  pre: r.oclIsKindOf(Role)
+  -- pre3: ensures that r is not in the set of roles assigned to u
+  --pre: let roles : Set(Role) = self.user.assignedRoles()
+       --in roles->excludes(r)
+  -- pre4: checks whether the location of the user is contained in the locations where r can be assigned
+  pre: self.l2->includes(u.location)
+  -- post: userAssign is changed so that u maps to the set consisting of the roles previously assigned to u and r
+  -- not sure what this means
+
 -- createSession: pg. 12 -- this operations already exists from previous assignment but must be changed
 -- activateRole: pg. 13 -- this operations already exists from previous assignment but must be changed
 -- checkAccess: pg. 13 -- this operations already exists from previous assignment but must be changed
+
+
+
 -- activateLocationByUser
 -- activateLocationByRole
