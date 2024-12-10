@@ -94,20 +94,12 @@
 
  --ssdConstraint satisfy
  !delete (deleteFile, superRole) from PermAssignment
+ !insert (home, rfile) into ObjLocation
 
-
-
-
-
-
-
-
- -- 1) added 3 locations
- -- 2) associated objects with these locations
- -- 3) If permission p has access to object O, location associated with p & o must be same
- -----------------------------
- -- readFile.checkAccess(rfile, read) returns true
- !delete (home, rfile) from ObjLocation -> CheckAcess return false
- -- !insert (away, rfile) into ObjLocation -> CheckAccess return false
- -- also violates constraints
- -- also violates constraints
+!insert (user, home) into UserLocation
+!insert (admin, office) into UserLocation
+!insert (superUser, serverRoom) into UserLocation
+---------------------------------------
+-- readFile.checkAccess(rfile, read) returns true
+!delete (home, rfile) from ObjLocation -> CheckAcess return false
+-- !insert (away, rfile) into ObjLocation -> CheckAccess return false

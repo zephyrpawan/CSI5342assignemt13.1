@@ -96,5 +96,5 @@
  !delete (deleteFile, superRole) from PermAssignment
 ---------------------------------------
 -- readFile.checkAccess(rfile, read) returns true
-!delete (home, rfile) from ObjLocation -> CheckAcess return false
+--!delete (home, rfile) from ObjLocation -> CheckAcess return false
 -- !insert (away, rfile) into ObjLocation -> CheckAccess return false
