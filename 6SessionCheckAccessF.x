@@ -1,3 +1,5 @@
+--
+
 !create readFile : Permission
 !create writeFile : Permission
 !create deleteFile : Permission
@@ -16,10 +18,7 @@
 !create serverRoom : Location
 
 !insert (home, rfile) into ObjLocation
-!insert (office, rfile) into ObjLocation
 !insert (office, wfile) into ObjLocation
-!insert (serverRoom, rfile) into ObjLocation
-!insert (serverRoom, wfile) into ObjLocation
 !insert (serverRoom, dfile) into ObjLocation
 
 !insert(readFile, read) into PermOperations
@@ -27,13 +26,16 @@
 
 !insert(home, readFile) into PermObjLoc
 !insert(office, readFile) into PermObjLoc
-!insert(office, wfile) into PermObjLoc
-!insert(serverRoom, rfile) into PermObjLoc
-!insert(serverRoom, wfile) into PermObjLoc
-!insert(serverRoom, dfile) into PermObjLoc
+!insert(office, writeFile) into PermObjLoc
+!insert(serverRoom, readFile) into PermObjLoc
+!insert(serverRoom, writeFile) into PermObjLoc
+!insert(serverRoom, deleteFile) into PermObjLoc
+
+!insert(home, readFile) into PermRoleLoc
 
 !insert(readFile, rfile) into PermObjects
 !insert(writeFile, wfile) into PermObjects
+!insert(deleteFile, dfile) into PermObjects
 
 !insert(write, wfile) into ExecuteOn
 !insert(read, rfile) into ExecuteOn
@@ -75,24 +77,17 @@
 !insert (deleteFile, superRole) into PermAssignment
 !opexit
 
-
-?? readFile.checkAccess(rfile, read)
---this returns true
--- now delete the ExecuteOn association between rfile & read
---!delete (read, rfile) from ExecuteOn
--- ?? readFile.checkAccess(rfile, read)
---this should be false now. Even though we did not modify the permission object,
--- it lost access because read operation can no longer be executed on the file.
--- We still have the write operation on wfile which we can verify by running
---?? writeFile.checkAccess(wfile, write)
--- We can also verify that superRole also has writePermission by
---?? superRole.checkAccess(wfile, write)
-
-
- !create del : Operation
- !insert(del, dfile) into ExecuteOn
- !insert(deleteFile, del) into PermOperations
- !insert(deleteFile, dfile) into PermObjects
+!create del : Operation
+!insert(del, dfile) into ExecuteOn
+!insert(deleteFile, del) into PermOperations
+!insert(deleteFile, dfile) into PermObjects
 
  --ssdConstraint satisfy
  !delete (deleteFile, superRole) from PermAssignment
+
+!insert(userRole, home) into ActivateLocation
+--!delete(userRole, home) from ActivateLocation
+---------------------------------------
+!insert (userSession, userRole) into SessionRoles
+!insert (user, home) into UserLocation
+!delete (user, home) from UserLocation

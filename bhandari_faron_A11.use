@@ -12,7 +12,9 @@ operations
   checkAccess(obj : Object, op : Operation) : Boolean =
     self.permission->exists(p | p.operation->includes(op)) and
     self.permission->exists(p | p.object->includes(obj)) and
-    op.object->includes(obj)
+    op.object->includes(obj) and
+    self.l1.p1.object->includes(obj) and
+    self.l1.p2.operation->includes(op)
 
   addAscendant(r : Role)
   deleteAscendant(r : Role)
@@ -69,7 +71,8 @@ operations
   checkAccess(obj : Object, op : Operation) : Boolean =
     self.object->includes(obj) and
     self.operation->includes(op) and
-    op.object->includes(obj)
+    op.object->includes(obj) and
+    self.l2.object->includes(obj)
 end
 
 -- ***************************************************************
@@ -94,7 +97,8 @@ operations
   checkAccess(obj : Object, op : Operation) : Boolean =
     self.role.permission->exists(p | p.operation->includes(op)) and
     self.role.permission->exists(p | p.object->includes(obj)) and
-    op.object->includes(obj)
+    op.object->includes(obj) and
+    self.user.location->forAll(loc | self.role.l1->includes(loc))
   invokeOperation(obj : Object, op : Operation)
 end
 -- ***************************************************************
@@ -262,22 +266,20 @@ context Permission::checkAccess(obj : Object, op : Operation) : Boolean
   pre: op.oclIsKindOf(Operation)
   pre: obj.oclIsKindOf(Object)
   -- pre2: check whether obj is in acceptable location
-  pre: self.l2.object->includes(obj) -- permObjLoc
+  --pre: self.l2.object->includes(obj) -- permObjLoc
 
 context Role::checkAccess(obj : Object, op : Operation) : Boolean
   --  pre1: check whether op and obj are valid objects
   pre: op.oclIsKindOf(Operation)
   pre: obj.oclIsKindOf(Object)
   -- pre2: check whether permission associated with obj and op is in acceptable location for role assignment
-  pre: self.l2.p1.object->includes(obj)
-  pre: self.l2.p2.operation->includes(op)
+  --pre: self.l2.p1.object->includes(obj)
+  --pre: self.l2.p2.operation->includes(op)
 
 context Session::checkAccess(obj : Object, op : Operation) : Boolean
   --  pre1: check whether op and obj are valid objects
   pre: op.oclIsKindOf(Operation)
   pre: obj.oclIsKindOf(Object)
-  -- pre2: check whether user in session is in location that is acceptable for role activation
-  pre: self.user.location->forAll(loc | self.role.l1->includes(loc))
 
 -- Each permission must be associated with 1 or more objects and operations
 context Permission
@@ -313,7 +315,8 @@ context User
 -- objLocation: all objects are associated with locations and each location associated with an obj must be in an allowable loc (pg. 5)
 context Object
   inv allObjectsAssociatedWithAllowableLocations:
-    Object.allInstances->forAll(obj | obj.location->size() >= 1 and obj.permission.l2->includes(obj.location))
+    Object.allInstances->forAll(obj | obj.location->size() >= 1
+    and obj.permission.l2->includes(obj.location))
 
 -- addRoleAssignLocation: associates a new set of locations with a role. The operation takes as input a role r and a set of locations l
 context Role :: addRoleAssignLocation(r : Role, l : Set(Location))
