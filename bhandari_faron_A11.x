@@ -5,27 +5,41 @@
 !create read : Operation
 !create write : Operation
 
-!create file : Object
+!create rfile : Object
 !create wfile : Object
 !create dfile : Object
 -- !destroy dfile
 
 !create office : Location
-!create remote : Location
+!create home : Location
 !create away : Location
 !create serverRoom : Location
+
+!insert (home, rfile) into ObjLocation
+!insert (office, rfile) into ObjLocation
+!insert (office, wfile) into ObjLocation
+!insert (serverRoom, rfile) into ObjLocation
+!insert (serverRoom, wfile) into ObjLocation
+!insert (serverRoom, dfile) into ObjLocation
 
 !insert(readFile, read) into PermOperations
 !insert(writeFile, write) into PermOperations
 
-!insert(readFile, file) into PermObjects
+!insert(home, readFile) into PermObjLoc
+!insert(office, readFile) into PermObjLoc
+!insert(office, wfile) into PermObjLoc
+!insert(serverRoom, rfile) into PermObjLoc
+!insert(serverRoom, wfile) into PermObjLoc
+!insert(serverRoom, dfile) into PermObjLoc
+
+!insert(readFile, rfile) into PermObjects
 !insert(writeFile, wfile) into PermObjects
 
 !insert(write, wfile) into ExecuteOn
-!insert(read, file) into ExecuteOn
+!insert(read, rfile) into ExecuteOn
 
---?? readFile.checkAccess(file, read)
---?? readFile.checkAccess(file, write)
+--?? readFile.checkAccess(rfile, read)
+--?? readFile.checkAccess(rfile, write)
 
 !create admin : User
 !create user : User
@@ -62,11 +76,11 @@
 !opexit
 
 
-?? readFile.checkAccess(file, read)
+?? readFile.checkAccess(rfile, read)
 --this returns true
--- now delete the ExecuteOn association between file & read
---!delete (read, file) from ExecuteOn
--- ?? readFile.checkAccess(file, read)
+-- now delete the ExecuteOn association between rfile & read
+--!delete (read, rfile) from ExecuteOn
+-- ?? readFile.checkAccess(rfile, read)
 --this should be false now. Even though we did not modify the permission object,
 -- it lost access because read operation can no longer be executed on the file.
 -- We still have the write operation on wfile which we can verify by running

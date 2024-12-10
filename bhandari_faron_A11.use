@@ -313,7 +313,7 @@ context User
 -- objLocation: all objects are associated with locations and each location associated with an obj must be in an allowable loc (pg. 5)
 context Object
   inv allObjectsAssociatedWithAllowableLocations:
-    Object.allInstances->forAll(obj | obj.location->size() = 1 and obj.permission.l2->includes(obj.location))
+    Object.allInstances->forAll(obj | obj.location->size() >= 1 and obj.permission.l2->includes(obj.location))
 
 -- addRoleAssignLocation: associates a new set of locations with a role. The operation takes as input a role r and a set of locations l
 context Role :: addRoleAssignLocation(r : Role, l : Set(Location))
