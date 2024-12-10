@@ -42,6 +42,7 @@ operations
 
   addRoleAssignLocation(r : Role, l : Set(Location))
   deleteRoleAssignLocation(r : Role, l : Set(Location))
+  addRoleActivateLoc(r : Role, l : Set(Location))
 end
 
 -- ***************************************************************
@@ -331,9 +332,17 @@ context Role :: deleteRoleAssignLocation(r : Role, l : Set(Location))
      --removes l from the set of roles associated with r.
   post: r.l2->excludesAll(l)
 
+-- addRoleActivateLoc: associates a new set of active locations for a role.
+context Role :: addRoleActivateLoc(r : Role, l : Set(Location))
+    --verifies whether r is a valid role by checking whether r is in the set Roles
+  pre: Role.allInstances->includes(r)
+    --whether l is a subset of Locations
+  pre: Location.allInstances->includesAll(l)
+    -- The role r is now mapped to the set of original activate locations union l
+  post: r.l1->includesAll(l1@pre->union(l))
+
 -- TODO: Operations to add pre/post-conditions for
--- addRoleActivateLoc: pg. 9
--- deleteRoleActivateLoc: pg. 9
+-- deleteRoleActivateLoc: removes a of locations from a role
 
 -- sarah
 -- addPermission: adds a new permission to the set Permissions (pg.10)
