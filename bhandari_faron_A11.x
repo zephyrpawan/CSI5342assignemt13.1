@@ -7,8 +7,13 @@
 
 !create file : Object
 !create wfile : Object
-!create deleted : Object
--- !destroy deleted
+!create dfile : Object
+-- !destroy dfile
+
+!create office : Location
+!create remote : Location
+!create away : Location
+!create serverRoom : Location
 
 !insert(readFile, read) into PermOperations
 !insert(writeFile, write) into PermOperations
@@ -71,9 +76,9 @@
 
 
  !create del : Operation
- !insert(del, deleted) into ExecuteOn
+ !insert(del, dfile) into ExecuteOn
  !insert(deleteFile, del) into PermOperations
- !insert(deleteFile, deleted) into PermObjects
+ !insert(deleteFile, dfile) into PermObjects
 
  --ssdConstraint satisfy
  !delete (deleteFile, superRole) from PermAssignment
